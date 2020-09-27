@@ -1,0 +1,13 @@
+---
+- name: deploy a jenkins ci server
+  hosts: localhost 
+  become: true
+  become_user: root
+
+  roles:
+    - base
+    - java8
+    - apache2
+    - jenkins
+
+
