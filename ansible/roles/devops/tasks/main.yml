@@ -12,6 +12,16 @@
   tags:
     - install
 
+# configure ansible 
+- name: uncomment line for ansible 
+  lineinfile:
+    dest: /etc/ansible/ansible.cfg
+    state: present
+    regexp: '^host_key_checking = False'
+    line: 'host_key_checking = False'
+  tags:
+    - install
+
 # define keys directory
 - name: keys directory 
   set_fact:
