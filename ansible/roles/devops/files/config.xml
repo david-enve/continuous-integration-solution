@@ -1,6 +1,6 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
-  <description>This is monitoring stack which includes es, td-agent and kibana.</description>
+  <description>This job deploys a monitoring stack which includes an elasticsearch, td-agent and kibana.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
@@ -13,7 +13,7 @@
   <builders>
     <hudson.tasks.Shell>
       <command>cd /opt/devops/ansible
-sudo ansible-playbook -vvv -i inventory --private-key=/opt/keys/devops-lab-dev.pem play.elasticsearch.yml -e host=devops-lab-elasticsearch-srvr -u ubuntu
+sudo ansible-playbook -vvv -i inventory --private-key=/opt/keys/devops-lab-dev.pem play.elasticsearch.yml -e host=devops-elasticsearch-dev-srvr -u ubuntu
 </command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>

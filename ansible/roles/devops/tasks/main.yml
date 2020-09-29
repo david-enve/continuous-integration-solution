@@ -41,6 +41,17 @@
   tags:
     - copy 
 
+- name: copy devops key file on the remote machine
+  copy:
+    src: /opt/keys/devops-lab-dev.pem
+    dest: /opt/keys/devops-lab-dev.pem
+    owner: jenkins
+    group: jenkins
+    mode: '0600'
+    remote_src: False
+  tags:
+    - copy
+
 - name: define deploy key
   set_fact:
     deploy_key: "/opt/keys/devops-git-lab"
