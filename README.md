@@ -123,9 +123,11 @@ Changes made to the Jenkins init script; the default set of changes set the conf
 ```
 
 ## How to run the playbook in order to install a jenkins server behind an apache proxy
- 1 - get inside the deployment path like: 'cd /opt/devops' where all the needed ansible roles are located.
- 2 - execute the following ansible command in order to run the roles to install software base, java8, jenkins and apache2 server:
-     'sudo ansible-playbook -vvv play.jenkins-ci-srvr.yml'
+```yaml
+   cd /opt/devops
+   sudo ansible-playbook -vvv play.ci-platform.yml
+
+```
 
 ## License
 
