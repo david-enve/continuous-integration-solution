@@ -1,0 +1,9 @@
+---
+- name: deploy artifacts against ci srvr
+  hosts: "{{ host }}" 
+  become: true
+  become_user: root
+
+  roles:
+    - devops 
+
