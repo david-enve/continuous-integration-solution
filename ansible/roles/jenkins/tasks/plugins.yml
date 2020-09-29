@@ -69,39 +69,3 @@
   retries: 3
   delay: 2
 
-# update jenkins theme setting in order to custom the dashboard
-- name: update jenkins theme setting in order to custom the dashboard
-  template:
-    src: mae-logo-for-jenkins.css.j2
-    dest: "{{ jenkins_home }}/userContent/mae-logo-for-jenkins.css"
-    owner: "{{ jenkins_process_user }}"
-    group: "{{ jenkins_process_group }}"
-    mode: 0644
-  register: theme_config
-  tags:
-    - update
-
-# cache the themes css in jenkins userContent
-- name: cache the themes css in jenkins userContent
-  get_url:
-    url: "{{ jenkins_theme_css_url }}"
-    dest: "{{ jenkins_home }}/userContent/mae-logo-for-jenkins.css"
-    owner: "{{ jenkins_process_user }}"
-    group: "{{ jenkins_process_group }}"
-    mode: 0644
-    validate_certs: false
-  register: theme_css
-  tags:
-    - update
-
-# configure themes for jenkins css url themes
-- name: configure themes for jenkins css url themes
-  template:
-    src: simpletheme.xml.j2
-    dest: "{{ jenkins_home }}/org.codefirst.SimpleThemeDecorator.xml"
-    owner: "{{ jenkins_process_user }}"
-    group: "{{ jenkins_process_group }}"
-    mode: 0644
-  notify: restart jenkins server
-  tags:
-    - update 

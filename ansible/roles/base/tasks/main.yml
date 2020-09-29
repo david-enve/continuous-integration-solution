@@ -12,8 +12,8 @@
   apt: update_cache=yes
 
 # upgrade all packages
-- name: upgrade all packages
-  apt: upgrade=dist
+#- name: upgrade all packages
+#  apt: upgrade=dist
 
 # install software base
 - name: install software base

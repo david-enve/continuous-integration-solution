@@ -59,6 +59,7 @@
   apt:
     name: jenkins
     state: "{{ jenkins_package_state }}"
+    allow_unauthenticated: yes 
   notify: configure default users
   tags:
     - update

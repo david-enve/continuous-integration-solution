@@ -1,6 +1,6 @@
 ---
 - name: deploy a jenkins ci server
-  hosts: localhost 
+  hosts: "{{ host }}" 
   become: true
   become_user: root
 
@@ -9,5 +9,6 @@
     - java8
     - apache2
     - jenkins
+      #- devops
 
 
