@@ -13,7 +13,7 @@
   <builders>
     <hudson.tasks.Shell>
       <command>cd /opt/devops/ansible
-sudo ansible-playbook -vvv -i inventory --private-key=/opt/keys/devops-lab-dev.pem play.elasticsearch.yml -e host=devops-elasticsearch-dev-srvr -u ubuntu
+sudo ansible-playbook -vvv -i inventory --private-key=/opt/keys/devops-lab-dev.pem play.elasticsearch.yml -e host=devops-lab-elasticsearch-srvr -u ubuntu
 </command>
       <configuredLocalRules/>
     </hudson.tasks.Shell>

@@ -9,7 +9,7 @@
     apt-get install -y sudo wget --allow-unauthenticated
     apt-get install -y python --allow-unauthenticated
     apt-get install -y ansible --allow-unauthenticated
-   tags:
+  tags:
     - install
 
 # define keys directory
@@ -33,11 +33,11 @@
 - name: copy github key file on the remote machine 
   copy:
     src: /opt/keys/github/devops-git-lab
-    dest: /opt/keys/github/devops-git-lab
+    dest: /opt/keys/devops-git-lab
     owner: jenkins
     group: jenkins
     mode: '0600'
-    remote_src: yes
+    remote_src: False
   tags:
     - copy 
 
@@ -56,6 +56,7 @@
       sudo rm -fr /opt/devops
     fi
     sudo GIT_SSH_COMMAND="ssh -i {{ deploy_key }} -o StrictHostKeyChecking=no -F /dev/null" git clone git@github.com:envelabs/devops-lab.git /opt/devops
+    sudo chown -R jenkins: /opt/devops
   tags:
     - update
 
@@ -66,7 +67,7 @@
     owner: jenkins
     group: jenkins
     mode: '0600'
-    remote_src: yes
+    remote_src: False
   tags:
     - copy 
 
@@ -82,14 +83,32 @@
   tags:
     - update
 
+# create a jobs if it not exists 
+- name: create jobs
+  shell: |
+    cd /var/lib/jenkins/jobs
+    if [ -d deploy-elasticsearch-dev-srvr ]
+    then
+      sudo rm -fr deploy-elasticsearch-dev-srvr
+    fi
+    sudo mkdir deploy-elasticsearch-dev-srvr && sudo chown -R jenkins: deploy-elasticsearch-dev-srvr
+  tags:
+    - update
+
 - name: copy a new job on the remote machine
   copy:
     src: config.xml
-    dest: /var/lib/jenkins/jobs/config.xml
+    dest: /var/lib/jenkins/jobs/deploy-elasticsearch-dev-srvr/config.xml
     owner: jenkins
     group: jenkins
     mode: '0644'
-    remote_src: yes
+    remote_src: False
   tags:
     - copy
 
+- name: restart jenkins service
+  service:
+    name: jenkins
+    state: restarted
+  tags:
+    - restart
