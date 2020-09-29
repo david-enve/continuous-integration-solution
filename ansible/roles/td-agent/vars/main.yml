@@ -1,0 +1,17 @@
+---
+# vars file for fluentd
+
+# define td-agent user and group
+td_agent_user: "td-agent"
+td_agent_group: "td-agent"
+
+# define elasticsearch connection details
+elasticsearch_user: "admin"
+elasticsearch_password: "admin"
+
+# define elasticsearch host
+elasticsearch_host: "localhost"
+
+# define cert path
+cert_path: "/opt"
+

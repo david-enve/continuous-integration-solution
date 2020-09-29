@@ -1,0 +1,27 @@
+---
+# tasks file for java11 installation procedure
+
+# add specified repository into sources list.
+- name: add specified repository into sources list
+  apt_repository:
+    repo: ppa:openjdk-r/ppa 
+    state: present
+  tags:
+   - setup
+
+# update local cache 
+- name: update local cache 
+  apt:
+   update_cache: yes
+  tags:
+   - update
+
+# install java v11 
+- name: install java v11 
+  apt:
+   name: openjdk-11-jdk
+   state: present
+  tags:
+   - install 
+
+

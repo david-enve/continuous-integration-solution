@@ -1,0 +1,11 @@
+---
+# vars file for kibana
+
+kibana_apt_key: "https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch"
+kibana_apt_repository: "deb https://d3g5vo6xdbdb9a.cloudfront.net/apt stable main"
+kibana_user: "kibana"
+kibana_group: "kibana"
+elasticsearch_user: "admin"
+elasticsearch_password: "admin"
+elasticsearch_host: "localhost"
+

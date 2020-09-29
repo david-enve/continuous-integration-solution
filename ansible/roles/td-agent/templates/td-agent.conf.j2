@@ -1,0 +1,32 @@
+---
+# configuration file for td-agent srvr which receives all app logs from clients and forwards them to elasticsearch node.
+
+# listening to incoming data from all td_agent clients
+<source>
+  @type forward
+  port 24224
+</source>
+
+# send defined data logs for apache2 access events into elasticsearch node
+<match apache*>
+  type copy
+  <store>
+    @type elasticsearch
+    host {{ elasticsearch_host }} 
+    port 9200
+    #scheme https
+    #ssl_version TLSv1_2
+    #ca_file {{ cert_path }}/root-ca.pem 
+    #client_cert {{ cert_path }}/elasticsearch.pem
+    #client_key {{ cert_path }}/elasticsearch-key.pem
+    user {{ elasticsearch_user }}    
+    password {{ elasticsearch_password }}
+    include_tag_key true
+    tag_key @log_name
+    logstash_format false
+    index_name ${tag}
+    include_timestamp true
+    flush_interval 10s
+  </store>
+</match>
+

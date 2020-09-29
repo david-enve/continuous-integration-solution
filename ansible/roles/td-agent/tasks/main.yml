@@ -1,0 +1,97 @@
+---
+# installing and configuring a td-agent server, the stable distribution package of fluentd, to forward all logs collected by clients to elasticsearch node
+
+# update local cache before running the installation for td-agent server
+- name: update local cache before installing td-agent server
+  apt:
+    update_cache: yes
+  tags:
+    - setup
+
+# install ntp server to have accurate current timestamp 
+- name: install ntpl server to have accurate current timestamp
+  apt:
+    name: ntp
+    state: present
+  tags:
+    - setup
+
+# configure file descriptors for td-agent where domain is root
+- name: configure file descriptors for td-agent where domain is root
+  pam_limits:
+    domain: root
+    limit_type: "{{item.limit_type}}"
+    limit_item: "{{item.limit_item}}"
+    value: "{{item.value}}"
+  with_items:
+    - { limit_type: 'soft', limit_item: 'nofile', value: 65536 }
+    - { limit_type: 'hard', limit_item: 'nofile', value: 65536 }
+  tags:
+    - setup
+
+# configure file descriptors for td-agent to wildcard domain
+- name: configure file descriptors for td-agent to wildcard domain
+  pam_limits:
+    domain: '*'
+    limit_type: "{{item.limit_type}}"
+    limit_item: "{{item.limit_item}}"
+    value: "{{item.value}}"
+  with_items:
+    - { limit_type: 'soft', limit_item: 'nofile', value: 65536 }
+    - { limit_type: 'hard', limit_item: 'nofile', value: 65536 }
+  tags:
+    - setup
+
+# set kernel parameters in /etc/sysctl.conf file for performance recommendations
+- sysctl:
+    name: "{{item.type}}"
+    value: "{{item.value}}"
+    state: present
+    reload: yes
+  with_items:
+    - { type: 'net.core.somaxconn', value: 1024 }
+    - { type: 'net.core.netdev_max_backlog', value: 5000 }
+    - { type: 'net.core.rmem_max', value: 16777216 }
+    - { type: 'net.core.wmem_max', value: 16777216 }
+    - { type: 'net.ipv4.tcp_wmem', value: 4096 12582912 16777216 }
+    - { type: 'net.ipv4.tcp_rmem', value: 4096 12582912 16777216 }
+    - { type: 'net.ipv4.tcp_max_syn_backlog', value: 8096 }
+    - { type: 'net.ipv4.tcp_slow_start_after_idle', value: 0 }
+    - { type: 'net.ipv4.tcp_tw_reuse', value: 1 }
+    - { type: 'net.ipv4.ip_local_port_range', value: 10240 65535 }
+  tags:
+    - setup 
+
+# download and install the latest td-agent server to run as a log collector agent
+- name: download and install the latest td-agent server to run as a log collector agent
+  shell: |
+    curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-xenial-td-agent3.sh | sh
+  tags:
+    - install
+
+# move custom td-agent configuration file into config path
+- name: move custom td-agent configuration file into config path
+  template:
+    src: td-agent.conf.j2
+    dest: "/etc/td-agent/td-agent.conf"
+    owner: "{{ td_agent_user }}"
+    group: "{{ td_agent_group }}"
+    mode: '0644'
+  tags:
+    - copy
+
+# install elasticsearch plugin for td-agent
+- name: install elasticsearch plugin for td-agent
+  shell: |
+    sudo /usr/sbin/td-agent-gem install {{ item }}
+  with_items:
+    - fluent-plugin-elasticsearch
+  tags:
+    - update
+
+# restart td-agent daemon
+- name: restart td-agent daemon
+  service: name=td-agent state=restarted
+  tags:
+    - restart
+

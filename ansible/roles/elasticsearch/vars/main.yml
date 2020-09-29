@@ -1,0 +1,11 @@
+---
+# vars file for elasticsearch
+
+elasticsearch_apt_key: "https://d3g5vo6xdbdb9a.cloudfront.net/GPG-KEY-opendistroforelasticsearch"
+elasticsearch_apt_repository: "deb https://d3g5vo6xdbdb9a.cloudfront.net/apt stable main"
+elasticsearch_package_url: "https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-oss-7.8.0-amd64.deb"
+performance_analizer_url: "https://nodejs.org/dist/v12.4.0/node-v12.4.0-linux-x64.tar.gz"
+elasticsearch_user: "elasticsearch"
+elasticsearch_group: "elasticsearch"
+elasticsearch_security_path: "/usr/share/elasticsearch/plugins/opendistro_security/tools"
+

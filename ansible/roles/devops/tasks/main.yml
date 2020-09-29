@@ -1,0 +1,95 @@
+---
+# istall ansible 
+- name: install ansible 
+  shell: |
+    apt-get -y update 
+    apt-get install -y software-properties-common 
+    apt-add-repository ppa:ansible/ansible -y
+    apt-get -y update
+    apt-get install -y sudo wget --allow-unauthenticated
+    apt-get install -y python --allow-unauthenticated
+    apt-get install -y ansible --allow-unauthenticated
+   tags:
+    - install
+
+# define keys directory
+- name: keys directory 
+  set_fact:
+    keys_path: /opt/keys
+  tags:
+    - setup
+
+- name: validate keys directory
+  file:
+    path: '{{ keys_path }}'
+    state: directory
+    recurse: yes
+    owner: jenkins
+    group: jenkins
+    mode: '0755'
+  tags:
+    - setup
+
+- name: copy github key file on the remote machine 
+  copy:
+    src: /opt/keys/github/devops-git-lab
+    dest: /opt/keys/github/devops-git-lab
+    owner: jenkins
+    group: jenkins
+    mode: '0600'
+    remote_src: yes
+  tags:
+    - copy 
+
+- name: define deploy key
+  set_fact:
+    deploy_key: "/opt/keys/devops-git-lab"
+  tags:
+    - setup
+
+# pull devops code
+- name: pull devops code
+  shell: |
+    cd /opt
+    if [ -d /opt/devops ]
+    then
+      sudo rm -fr /opt/devops
+    fi
+    sudo GIT_SSH_COMMAND="ssh -i {{ deploy_key }} -o StrictHostKeyChecking=no -F /dev/null" git clone git@github.com:envelabs/devops-lab.git /opt/devops
+  tags:
+    - update
+
+- name: copy inventory file on the remote machine
+  copy:
+    src: /opt/enve-devops-lab/ansible/inventory
+    dest: /opt/devops/ansible/inventory
+    owner: jenkins
+    group: jenkins
+    mode: '0600'
+    remote_src: yes
+  tags:
+    - copy 
+
+# create a directory for jobs if it not exists 
+- name: create a directory for jobs
+  shell: |
+    cd /var/lib/jenkins
+    if [ -d jobs ]
+    then
+      sudo rm -fr jobs
+    fi
+    sudo mkdir jobs && sudo chown -R jenkins: jobs
+  tags:
+    - update
+
+- name: copy a new job on the remote machine
+  copy:
+    src: config.xml
+    dest: /var/lib/jenkins/jobs/config.xml
+    owner: jenkins
+    group: jenkins
+    mode: '0644'
+    remote_src: yes
+  tags:
+    - copy
+

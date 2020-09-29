@@ -1,0 +1,12 @@
+---
+- name: installing elasticsearch server which is the log aggregator  
+  hosts: "{{ host }}" 
+  become: true
+  become_user: root
+
+  roles:
+    - base
+    - java11
+    - elasticsearch
+    - td-agent
+    - kibana

@@ -1,0 +1,239 @@
+---
+# installing opendistro-for-elasticsearch 7.1.1 for aggregation logs
+
+# installing dependencies for elasticsearch
+- name: install apt-transport-https
+  apt: name={{ item }} state=present
+  with_items:
+    - apt-transport-https
+    - locales
+  tags:
+    - setup
+
+# configure max_map_count value in order to let set it up permanetly
+- name: configure max_map_count value in order to let set it up permanently
+  become: yes
+  become_user: root
+  shell: |
+    sysctl -w vm.max_map_count=262144 
+  tags:
+    - setup
+
+# execute locale-gen for UTF-8 to fix missing UTF
+- name: execute locale-gen for UTF-8 to fix missing UTF
+  shell: |
+    sudo locale-gen en_US.UTF-8
+  tags:
+    - setup
+ 
+# download nodejs v12.4.0 if using performance analizer tool is needed 
+- name: download nodejs v12.4.0 if using performance analizer tool is needed
+  get_url:
+    url: "{{ performance_analizer_url }}" 
+    dest: /tmp
+    mode: '0755'
+  tags:
+    - setup
+
+# unpackage and put nodejs binaries into /usr/local path in order to used it
+- name: unpackage and put nodejs binaries into /usr/local path in order to used it
+  shell: |
+    sudo tar -xf /tmp/node-v12.4.0-linux-x64.tar.gz --directory /usr/local --strip-components 1
+  tags:
+    - setup
+
+# adds the apt-key for elasticsearch
+- name: add elasticsearch apt-key
+  apt_key:
+    url: "{{ elasticsearch_apt_key }}"
+    state: present
+  tags:
+    - setup
+
+# add the elasticsearch apt-repository
+- name: adding elasticsearch apt repository
+  apt_repository:
+    repo: "{{ elasticsearch_apt_repository }}" 
+    state: present
+  tags:
+    - setup
+
+# download elasticsearch .deb package in order to be installed
+- name: download elasticsearch .deb package in order to be installed 
+  get_url:
+    url: "{{ elasticsearch_package_url }}" 
+    dest: /tmp
+    mode: '0644'
+  tags:
+    - setup
+
+# installing elasticsearch-oss .deb package
+- name:  install elasticsearch-oss deb package
+  shell: |
+    sudo dpkg -i /tmp/elasticsearch-oss-7.8.0-amd64.deb 
+  tags:
+    - install
+
+# update local cache 
+- name: update local cache before installing elasticsearch 
+  apt:
+    update_cache: yes
+  tags:
+    - install
+
+# install elasticsearch and update the local cache 
+- name: installing elasticsearch opendistro 
+  apt:
+    name: opendistroforelasticsearch
+    state: present
+    update_cache: yes
+  tags:
+    - install
+
+# set JAVA_HOME value for /etc/default/elasticsearch file to let starting up
+- name: set JAVA_HOME value for /etc/default/elasticsearch file to let starting up
+  lineinfile:
+    dest: /etc/default/elasticsearch
+    state: present
+    regexp: '^JAVA_HOME'
+    line: 'JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64'
+  tags:
+    - install
+
+# set MAX_OPEN_FILES value for /etc/default/elasticsearch file 
+- name: set MAX_OPEN_FILES value for /etc/default/elasticsearch file 
+  lineinfile:
+    dest: /etc/default/elasticsearch
+    state: present
+    regexp: '^MAX_OPEN_FILES'
+    line: 'MAX_OPEN_FILES=65535'
+  tags:
+    - install
+
+# set MAX_LOCKED_MEMORY value for /etc/default/elasticsearch file 
+- name: set MAX_LOCKED_MEMORY value for /etc/default/elasticsearch 
+  lineinfile:
+    dest: /etc/default/elasticsearch
+    state: present
+    regexp: '^MAX_LOCKED_MEMORY'
+    line: 'MAX_LOCKED_MEMORY=unlimited'
+  tags:
+    - install
+
+# configure system settings, file descriptors and number of threads for elasticsearch
+- name: configure system settings, file descriptors and number of threads for elasticsearch
+  become: yes
+  become_user: root
+  pam_limits:
+    domain: elasticsearch
+    limit_type: "{{item.limit_type}}"
+    limit_item: "{{item.limit_item}}"
+    value: "{{item.value}}"
+  with_items:
+    - { limit_type: 'soft', limit_item: 'memlock', value: unlimited }
+    - { limit_type: 'hard', limit_item: 'memlock', value: unlimited }
+  tags:
+    - install
+
+# insert a block in service.elasticsearch for LimitMEMLOCK=infinity value
+- name: insert a block in service.elasticsearch for LimitMEMLOCK=infinity value
+  become: yes
+  become_user: root
+  blockinfile:
+    path: "/usr/lib/systemd/system/elasticsearch.service"
+    insertafter: "LimitNOFILE=65535"
+    block: |
+      [Service]
+      LimitMEMLOCK=infinity
+  tags:
+    - install
+
+# just force systemd to reload services
+- name: just force systemd to reload services
+  systemd:
+    daemon_reload: yes
+  tags:
+    - reload
+
+# install performance analizer package to monitor the elasticsearch node health through port 9600 
+- name: install performance analizer package to monitor the elasticsearch node health through port 9600
+  shell: |
+    sudo npm install -g @aws/opendistro-for-elasticsearch-perftop 
+  tags:
+    - install
+
+# define elasticsearch home directory
+- name: define elasticsearch home directory
+  set_fact:
+    elasticsearch_home: /etc/elasticsearch
+  tags:
+    - update
+
+# validate elasticsearch home directory
+- name: validate elasticsearch home directory
+  file:
+    path: "{{ elasticsearch_home }}"
+    state: directory
+    recurse: yes
+    owner: "{{ elasticsearch_user }}"
+    group: "{{ elasticsearch_group }}"
+    mode: '0755'
+  tags:
+    - update
+
+# define elasticsearch data directory
+- name: define elasticsearch data directory
+  set_fact:
+    data_path: /opt/data
+  tags:
+    - update
+
+# validate elasticsearch data directory
+- name: validate elasticsearch data directory
+  file:
+    path: "{{ data_path }}"
+    state: directory
+    recurse: yes
+    owner: "{{ elasticsearch_user }}"
+    group: "{{ elasticsearch_group }}"
+    mode: '0755'
+  tags:
+    - update
+
+# copy custom elasticsearch configuration file
+- name: copy custom elasticsearch configuration file
+  template:
+    src: elasticsearch.yml.j2
+    dest: "{{ elasticsearch_home }}/elasticsearch.yml"
+    owner: "{{ elasticsearch_user }}"
+    group: "{{ elasticsearch_group }}"
+    mode: '0644'
+  tags:
+    - update
+
+# copy custom elasticsearch jvm settings configuration file
+- name: copy custom elasticsearch jvm settings configuration file
+  template:
+    src: jvm.options.j2
+    dest: "{{ elasticsearch_home }}/jvm.options"
+    owner: "{{ elasticsearch_user }}"
+    group: "{{ elasticsearch_group }}"
+    mode: '0644'
+  tags:
+    - update
+
+# enable elasticsearch service
+- name: enable elasticsearch service 
+  systemd:
+    name: elasticsearch
+    enabled: yes
+  tags:
+    - enable
+
+# restart elasticsearch service
+- name: restart elasticsearch service
+  systemd:
+    state: restarted
+    name: elasticsearch
+  tags:
+    - restart
