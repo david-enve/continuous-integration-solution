@@ -9,18 +9,18 @@ Requires `terraform` to be installed on your local machine and configuring your 
 ## How to run terraform in order to deploy a vpc with subnets and security groups. At the same time it deploys two instances running OS Ubuntu server 18.04
 
 ```yaml
-   terraform plan 
+   # terraform plan 
 ```
 
 ```yaml
-   terraform apply
+   # terraform apply
 ```
 
 ```yaml
-   terraform plan command shows what resources will be deployed.
+   1 - terraform plan command shows what resources will be deployed.
 ```
 ```yaml
-   terraform apply command will deployed the needed resorces.
+   2 - terraform apply command will deployed the needed resorces.
 ```
 
 ## License
