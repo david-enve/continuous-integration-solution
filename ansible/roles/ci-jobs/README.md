@@ -1,38 +1,29 @@
-Role Name
-=========
+# Ansible role 
 
-A brief description of the role goes here.
+Create a new jenkins job using ansible roles
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Requires `python-jenkins` module. Such module can be install with `pip install python-jenkins` command
+If `pip` module is missing as well, then you can install it using `sudo apt-get install python-pip` command before
 
-Role Variables
---------------
+## Which services are create
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+```
+- Use this ansible role to create a new jenkins job
+```
 
-Dependencies
-------------
+## How to run the ansible role 
+```
+sudo ansible-playbook -vvv play.run-ci-jobs.yml -e host=localhost -e job=$JOB_NAME
+```
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## Aditional notes
 
-Example Playbook
-----------------
+`host=localhost` corresponds to the ci server where ansible will deployed the new jobs
+`$JOB_NAME` variable corresponds to new desired job's name
+Template `ci-jobs.xml` contains the basic information to be used in the job creation process liks `description` and `build` step to execute all needed commands
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Author Information
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
-
-License
--------
-
-BSD
-
-Author Information
-------------------
-
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+DevOps guys
