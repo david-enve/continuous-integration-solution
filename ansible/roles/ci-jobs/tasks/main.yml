@@ -1,0 +1,8 @@
+---
+# Create a new jenkins job using basic authentication
+- jenkins_job:
+    config: "{{ lookup('file', 'templates/ci-jobs.xml') }}"
+    name: "{{ job }}"
+    password: $Bu11_Ch0ck3n$ 
+    url: http://localhost:8080
+    user: admin
