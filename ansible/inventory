@@ -1,7 +1,3 @@
-[devops-ci-dev-srvr]
-52.207.235.136
-
-[devops-elasticsearch-dev-srvr]
-54.173.4.29
-
+[local]
+localhost ansible_connection=local ansible_user=ubuntu
 

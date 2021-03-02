@@ -125,7 +125,7 @@ Changes made to the Jenkins init script; the default set of changes set the conf
 ## How to run the playbook in order to install a jenkins server behind an apache proxy
 ```yaml
    cd /opt/devops
-   sudo ansible-playbook -vvv play.ci-platform.yml
+   sudo ansible-playbook -vvv play.ci-platform.yml -e host=localhost
 
 ```
 
