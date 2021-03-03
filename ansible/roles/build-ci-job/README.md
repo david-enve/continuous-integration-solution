@@ -15,7 +15,7 @@ If `pip` module is missing as well, then you can install it using `sudo apt-get 
 
 ## How to run the ansible role 
 ```
-sudo ansible-playbook -vvv play.run-ci-jobs.yml -e host=localhost -e job=$JOB_NAME
+sudo ansible-playbook -vvv play.build-ci-job.yml -e host=localhost -e job=$JOB_NAME
 ```
 
 ## Aditional notes
