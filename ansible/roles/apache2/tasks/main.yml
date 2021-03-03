@@ -10,3 +10,10 @@
 # adding apache to the startup process
 - name: add apache2 to the startup process
   shell: update-rc.d apache2 defaults
+
+# start apache2 service
+- name: apache2 start up 
+  service:
+    name: apache2
+    state: started
+
