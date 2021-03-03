@@ -22,7 +22,7 @@ sudo ansible-playbook -vvv play.run-ci-jobs.yml -e host=localhost -e job=$JOB_NA
 
 ```yaml
    1 - host=localhost value corresponds to the ci server where ansible will deployed the new jobs
-   2 - $JOB_NAME variable corresponds to new desired job's name
+   2 - $JOB_NAME variable corresponds to new desired job's name, i.e '-e job=run-devops-process-dev'
    3 - Template build-ci-job.xml contains the basic information to be used in the job creation process like description and build step to execute all needed commands 
 
 ```
