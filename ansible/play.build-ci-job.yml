@@ -5,5 +5,5 @@
   become_user: root
 
   roles:
-    - ci-jobs 
+    - build-ci-job 
 
