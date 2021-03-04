@@ -1,0 +1,9 @@
+---
+- name: push ventum app code to aws s3  
+  hosts: "{{ host }}" 
+  become: true
+  become_user: root
+
+  roles:
+    - run-ventum-app-s3
+

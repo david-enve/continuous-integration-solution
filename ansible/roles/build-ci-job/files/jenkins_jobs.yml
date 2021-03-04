@@ -1,0 +1,25 @@
+# define here new jenkins jobs
+- job:
+    name: devops-lab-dev
+    project-type: freestyle
+    defaults: global
+    description: 'This is a testing job creation'
+    disabled: false
+    display-name: 'devops-lab-job-1'
+    concurrent: true
+    workspace: /srv/build-area/job-name
+    quiet-period: 5
+    block-downstream: false
+    block-upstream: false
+    retry-count: 3
+    node: NodeLabel1 || NodeLabel2
+    builders:
+      - shell: |
+          cd /opt/devops
+          sudo ansible-playbook -vvv play.test.yml -e host=localhost
+    logrotate:
+      daysToKeep: 3
+      numToKeep: 20
+      artifactDaysToKeep: -1
+      artifactNumToKeep: -1
+

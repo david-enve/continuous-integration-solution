@@ -1,0 +1,44 @@
+---
+# tasks file for run-ventum-app-s3
+
+- name: define build path
+  set_fact:
+    build_path: /opt/builds
+  tags:
+    - setup
+
+- name: validate build directory
+  file:
+    path: "{{ build_path }}"
+    state: directory
+    mode: 0755
+  tags:
+    - setup
+
+- name: define deploy key
+  set_fact:
+    deploy_key: "/opt/keys/ventum-github.pem"
+  tags:
+    - setup
+
+- name: pull ventum app code
+  shell: |
+    cd {{ build_path }}
+    if [ -d {{ build_project }} ]
+    then
+      sudo rm -fr {{ build_project }}
+    fi
+    sudo GIT_SSH_COMMAND="ssh -i {{ deploy_key }} -o StrictHostKeyChecking=no -F /dev/null" git clone git@github.com:envelabs/ventum-devops.git --branch {{ branch }} {{ build_project }}
+  tags:
+    - update
+
+- name: populate ventum app code in aws s3 bucket
+  s3_sync:
+    aws_access_key: "{{ lookup('env','aws_key') }}"
+    aws_secret_key: "{{ lookup('env','aws_secret') }}"
+    bucket: "{{ bucket_name }}"
+    file_root: "{{ build_path }}/{{ build_project }}"
+    mode: push
+  tags:
+    - update
+

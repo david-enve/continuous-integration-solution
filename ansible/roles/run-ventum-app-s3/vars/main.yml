@@ -1,0 +1,12 @@
+---
+# vars file for run-ventum-app-s3
+
+# project
+build_project: "devops"
+
+# branch
+branch: "master"
+
+# bucket
+bucket_name: "devops-lab-dev"
+
