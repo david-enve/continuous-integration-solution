@@ -13,8 +13,8 @@
     path: "{{ jenkins_jobs_path }}"
     state: directory
     recurse: yes
-    owner: jenkins
-    group: jenkins
+    owner: "jenkins"
+    group: "jenkins"
     mode: "0755"
 
 - name: adding jenkins_jobs conf file

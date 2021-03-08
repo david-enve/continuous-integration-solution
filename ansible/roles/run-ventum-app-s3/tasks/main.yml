@@ -11,7 +11,9 @@
   file:
     path: "{{ build_path }}"
     state: directory
-    mode: 0755
+    owner: "jenkins"
+    group: "jenkins"
+    mode: "0755"
   tags:
     - setup
 
@@ -34,10 +36,12 @@
 
 - name: populate ventum app code in aws s3 bucket
   s3_sync:
-    aws_access_key: "{{ lookup('env','aws_key') }}"
-    aws_secret_key: "{{ lookup('env','aws_secret') }}"
+    aws_access_key: "{{ lookup('file', '~/.aws/ventumops.acces.key') }}"
+    aws_secret_key: "{{ lookup('file', '~/.aws/ventumops.secret.key') }}"
     bucket: "{{ bucket_name }}"
+    region: "{{ region }}"
     file_root: "{{ build_path }}/{{ build_project }}"
+    file_change_strategy: force
     mode: push
   tags:
     - update
