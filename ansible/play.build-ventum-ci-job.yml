@@ -5,5 +5,5 @@
   become_user: root
 
   roles:
-    - build-ci-job 
+    - build-ventum-ci-job 
 
