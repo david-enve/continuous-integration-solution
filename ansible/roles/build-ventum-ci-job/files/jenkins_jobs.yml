@@ -5,7 +5,7 @@
     defaults: global
     description: 'This is a testing job creation'
     disabled: false
-    display-name: 'devops-lab-job-9'
+    display-name: 'devops-lab-job-1'
     concurrent: true
     workspace: /srv/build-area/job-name
     quiet-period: 5
