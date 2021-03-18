@@ -1,8 +1,14 @@
 ---
-- name: update repositories cache and install jenkins-job-builder package
+- name: gather package facts
+  package_facts:
+    manager: apt
+
+- name: install jenkins-job-builder package if it is absent
   apt:
     name: jenkins-job-builder
     update_cache: yes
+    state: present
+  when: '"jenkins-job-builder" not in ansible_facts.packages'
 
 - name: define jenkins_jobs directory
   set_fact:
