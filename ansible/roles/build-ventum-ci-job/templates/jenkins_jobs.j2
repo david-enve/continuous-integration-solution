@@ -8,8 +8,8 @@ allow_duplicates=False
 update=all
 
 [jenkins]
-user=admin
-password=119eb3045cc0c58810c1bca97ac7bba118
-url=http://localhost:8080
+user={{ jenkins_user }}
+password={{ jenkins_api_token }}
+url={{ jenkins_url }}
 query_plugins_info=False
 

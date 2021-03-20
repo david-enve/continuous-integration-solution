@@ -23,9 +23,24 @@
     group: "jenkins"
     mode: "0755"
 
-- name: adding jenkins_jobs conf file
-  copy:
-    src: "jenkins_jobs.ini"
+- name: execute script.groovy script under files directory to create a new api token
+  jenkins_script:
+    script: "{{ lookup('file', 'files/script.groovy') }}"
+    user: "{{ jenkins_user }}"
+    password: "{{ jenkins_password }}"
+    url: "{{ jenkins_url }}"
+    validate_certs: no
+  register: token_result
+
+- debug:
+    var: token_result.output
+
+- set_fact:
+    jenkins_api_token: "{{ token_result.output }}"
+
+- name: adding jenkins_jobs conf file under /etc/jenkins_jobs directory
+  template:
+    src: "jenkins_jobs.j2"
     dest: "{{ jenkins_jobs_path }}/jenkins_jobs.ini"
     owner: "jenkins"
     group: "jenkins"

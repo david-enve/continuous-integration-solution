@@ -1,2 +1,12 @@
 ---
 # vars file for jobs
+jenkins_api_token: "{{ token_result.output }}"
+
+# jenkins user for api token
+jenkins_user: "admin"
+
+# jenkins user password
+jenkins_password: "$Bu11_Ch0ck3n$"
+
+# jenkins url to access for
+jenkins_url: "http://localhost:8080"
