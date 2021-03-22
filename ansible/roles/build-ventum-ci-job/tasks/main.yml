@@ -58,4 +58,11 @@
   shell: |
     cd {{ jenkins_jobs_path }} &&
     sudo jenkins-jobs --conf jenkins_jobs.ini {{ action }} jenkins_jobs.yml
+  when: action == 'update'
+
+- name: delete a jenkins job
+  shell: |
+    cd {{ jenkins_jobs_path }} &&
+    sudo jenkins-jobs --conf jenkins_jobs.ini {{ action }} {{ job }}
+  when: action == 'delete'
 
