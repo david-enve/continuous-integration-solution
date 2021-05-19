@@ -1,4 +1,4 @@
-# Ansible Role: Jenkins CI
+# Ansible Role: Jenkins CI Platform
 
 Install Jenkins CI on RHEL/CentOS and Debian/Ubuntu servers.
 
