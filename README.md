@@ -1,4 +1,4 @@
-# Ansible Role: Deploy a Jenkins CI platform
+# Ansible Role: Deploy a Jenkins CI
 
 Install Jenkins CI on RHEL/CentOS and Debian/Ubuntu servers.
 
